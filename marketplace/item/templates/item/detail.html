@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-5 gap-6">
+    <div class="col-span-3">
+        <div class="flex justify-center">
+            <img class="text-center h-96 rounded-xl" src="{{ item.image.url }}" alt="" >
+        </div>
+    </div>
+
+    <div class="col-span-2 p-6 bg-gray-100 rounded-xl">
+        <h1 class="text-center mb-6 text-3xl">{{ item.name }}</h1>
+        <p class="text-gray-500"><strong>Цена: </strong>{{item.price}} руб.</p>
+        <p class="text-gray-500"><strong>Продавец: </strong> {{item.create_by.username}}</p>
+
+        {% if item.description %}
+            <p class="text-gray-700">
+                <strong class="text-gray-500">Описание:</strong><br>
+                {{ item.description }}
+            </p>
+        {% endif %}
+
+        {% if request.user == item.create_by %}
+            <div class="mt-6 p-6 bg-white rounded-xl">
+                <p>Этот товар создан тобой!</p>
+
+                <a href="{% url 'item:edit' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl">Редактировать товар</a>
+                <a href="{% url 'item:delete' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl">Удалить товар</a>
+            </div>
+        {% else %}
+            <a href="{% url 'conversation:new' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Связь с продавцом</a>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="mt-6 px-6 py-12 bg-gray-100 rounded-xl">
+    <h2 class="mb-12 text-2xl text-center">Товары из этой же категории</h2>
+
+    <div class="grid grid-cols-3 gap-3">
+        {% for item in related_name %}
+            <div>
+                <a href="{% url 'item:detail' item.id %}">
+                    <div class="p-6 bg-white rounded-xl">
+                        <div class="flex justify-center">
+                            <img class="text-center h-40 rounded-t-xl" src="{{ item.image.url }}" alt="" >
+                        </div>
+                        <h2 class="text-2xl">{{ item.name }}</h2>
+                        <p class="text-gray-500">Цена: {{ item.price }}</p>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
